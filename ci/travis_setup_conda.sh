@@ -24,4 +24,4 @@ source activate test-environment
 conda install --file tests/requirements.txt
 
 # Install lens
-pip install --no-deps -e .
+pip install -e .
