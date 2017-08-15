@@ -1,0 +1,41 @@
+language: generic
+sudo: false
+
+env:
+    global:
+        # The following versions are the 'default' for tests, unless
+        # overidden underneath. They are defined here in order to save having
+        # to repeat them for all configurations.
+        - PYTHON_VERSION=3.6
+        - PYTEST_OPTIONS='-v --ignore=it/'
+
+matrix:
+
+    include:
+
+        # Check for sphinx doc build warnings
+        # - os: linux
+        #   env: CMD='sphinx-build'
+
+        # macOS
+        - os: osx
+        - os: osx
+          env: PYTHON_VERSION=2.7
+
+        # Linux
+        - os: linux
+          env: PYTHON_VERSION=2.7
+        - os: linux
+          env: PYTHON_VERSION=3.5
+        - os: linux
+
+        # Run regression tests
+        # - os: linux
+        #   env: PYTEST_OPTIONS='-v --ignore=tests'
+
+install:
+    - source ci/travis_setup_conda.sh
+
+script:
+   - flake8 lens
+   - py.test $PYTEST_OPTIONS

@@ -1,0 +1,15 @@
+boto3
+cloudpickle
+dask
+flake8
+ipywidgets
+matplotlib
+numpy
+pandas
+patsy
+plotly
+pytest
+s3fs
+scipy
+statsmodels
+toolz
