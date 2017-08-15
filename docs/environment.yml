@@ -1,0 +1,13 @@
+name: lens-docs
+dependencies:
+  - python=3.6
+  - numpy
+  - dask
+  - ipywidgets
+  - matplotlib
+  - numpy>=1.11
+  - pandas
+  - plotly
+  - scipy
+  - pip:
+    - tdigest
