@@ -1,6 +1,10 @@
 language: generic
 sudo: false
 
+branches:
+  only:
+  - master
+
 env:
     global:
         # The following versions are the 'default' for tests, unless
