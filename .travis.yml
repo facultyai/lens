@@ -6,7 +6,6 @@ env:
         # The following versions are the 'default' for tests, unless
         # overidden underneath. They are defined here in order to save having
         # to repeat them for all configurations.
-        - PYTHON_VERSION=3.6
         - PYTEST_OPTIONS='-v --ignore=it/'
         - MPLBACKEND=Agg
 
@@ -20,15 +19,17 @@ matrix:
 
         # macOS
         - os: osx
+          env: PYTHON_VERSION=3.6
         - os: osx
           env: PYTHON_VERSION=2.7
 
         # Linux
         - os: linux
-          env: PYTHON_VERSION=2.7
+          env: PYTHON_VERSION=3.6
         - os: linux
           env: PYTHON_VERSION=3.5
         - os: linux
+          env: PYTHON_VERSION=2.7
 
         # Run regression tests
         # - os: linux
