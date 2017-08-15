@@ -8,6 +8,7 @@ env:
         # to repeat them for all configurations.
         - PYTHON_VERSION=3.6
         - PYTEST_OPTIONS='-v --ignore=it/'
+        - MPLBACKEND=Agg
 
 matrix:
 
