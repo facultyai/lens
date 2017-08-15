@@ -1,0 +1,15 @@
+include *.rst
+include *.txt
+include *.yml
+include tox.ini
+recursive-include ci *.sh
+recursive-include docs *.ipynb
+recursive-include docs *.py
+recursive-include docs *.rst
+recursive-include docs *.txt
+recursive-include docs *.yml
+recursive-include docs Makefile
+recursive-include it *.py
+recursive-include tests *.csv
+recursive-include tests *.py
+recursive-include tests *.txt
