@@ -6,6 +6,7 @@ dependencies:
   - ipywidgets
   - matplotlib
   - numpy>=1.11
+  - numpydoc
   - pandas
   - plotly
   - scipy
