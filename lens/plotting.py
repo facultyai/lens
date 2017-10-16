@@ -50,7 +50,7 @@ def plot_distribution(ls, column, bins=None):
 
     fig, ax = plt.subplots()
 
-    ax.bar(edges[:-1], counts, width=np.diff(edges), label=column, alpha=0.4,
+    ax.bar(edges[:-1], counts, width=np.diff(edges), label=column,
            align='edge')
 
     ax.set_ylim(bottom=0)
