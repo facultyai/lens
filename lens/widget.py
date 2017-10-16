@@ -116,7 +116,7 @@ def _simple_columnwise_widget(ls, plot_function, columns):
     """Basic column-wise plot widget"""
 
     dropdown = widgets.Dropdown(options=columns, description='Column:')
-    plot_area = widget.Output()
+    plot_area = widgets.Output()
     update_plot(plot_function, [ls, columns[0]], plot_area, height=500)
 
     dropdown.observe(lambda x: update_plot(plot_function, [ls, x['new']],
