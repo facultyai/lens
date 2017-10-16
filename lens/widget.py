@@ -1,3 +1,4 @@
+from __future__ import division
 import sys
 import logging
 import matplotlib.pyplot as plt
@@ -18,6 +19,9 @@ logger.addHandler(logging.StreamHandler())
 IN_NOTEBOOK = 'ipykernel' in sys.modules
 
 PADDING = '10px'
+PLOT_HEIGHT = 400
+PLOT_WIDTH = 600
+DPI = 72
 
 
 def render_plotly_js(fig, width=800, height=600):
@@ -59,14 +63,15 @@ def create_correlation_plot_widget(ls):
 def update_plot(f, args, output_widget, **kwargs):
     """Updates the content of an html_area with rendered function"""
 
-    figure = f(*args)    
+    figure = f(*args)
+    figure.set_size_inches(PLOT_WIDTH / DPI, PLOT_HEIGHT / DPI)
     output_widget.clear_output()
-    
+
     if 'height' in kwargs.keys():
         output_widget.layout.height = '{:.0f}px'.format(kwargs['height'])
     if 'width' in kwargs.keys():
         output_widget.layout.width = '{:.0f}px'.format(kwargs['width'])
-        
+
     with output_widget:
         display(figure)
 
@@ -117,10 +122,10 @@ def _simple_columnwise_widget(ls, plot_function, columns):
 
     dropdown = widgets.Dropdown(options=columns, description='Column:')
     plot_area = widgets.Output()
-    update_plot(plot_function, [ls, columns[0]], plot_area, height=500)
+    update_plot(plot_function, [ls, columns[0]], plot_area, height=PLOT_HEIGHT)
 
     dropdown.observe(lambda x: update_plot(plot_function, [ls, x['new']],
-                                           plot_area, height=500),
+                                           plot_area, height=PLOT_HEIGHT),
                      names='value', type='change')
 
     return widgets.VBox([dropdown, plot_area], padding=PADDING)
