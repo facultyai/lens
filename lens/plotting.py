@@ -301,7 +301,7 @@ def plot_correlation_mpl(ls, include=None, exclude=None):
         ax=ax,
         xticklabels=columns, yticklabels=columns,
         vmin=-1, vmax=1,
-        cmap='BuRd'
+        cmap='RdBu_r'
     )
 
     ax.xaxis.tick_top()
