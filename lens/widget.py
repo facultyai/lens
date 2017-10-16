@@ -62,7 +62,7 @@ def create_correlation_plot_widget(ls):
     update_plot(plot_correlation_mpl,
         [ls],
         plot_area,
-        height=PLOT_WIDTH, width=PLOT_WIDTH
+        height=PLOT_WIDTH, width=PLOT_WIDTH*1.3
         )
 
     return plot_area
