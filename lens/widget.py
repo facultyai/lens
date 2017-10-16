@@ -8,7 +8,7 @@ from ipywidgets import widgets
 from IPython.display import display
 from lens.plotting import (plot_distribution,
                            plot_cdf,
-                           plot_pairdensity,
+                           plot_pairdensity_mpl,
                            plot_correlation)
 
 logger = logging.getLogger(__name__)
@@ -78,7 +78,7 @@ def update_plot(f, args, output_widget, **kwargs):
 
 def _update_pairdensity_plot(ls, dd1, dd2, plot_area):
     if dd1.value != dd2.value:
-        update_plot(plot_pairdensity,
+        update_plot(plot_pairdensity_mpl,
                     [ls, dd1.value, dd2.value],
                     plot_area, height=600, width=600)
 
@@ -104,7 +104,7 @@ def create_pairdensity_plot_widget(ls):
     if len(numeric_columns) > 1:
         dropdown1.value, dropdown2.value = numeric_columns[:2]
 
-    plot_area = widgets.HTML()
+    plot_area = widgets.Output()
 
     for dropdown in [dropdown1, dropdown2]:
         dropdown.observe(lambda x: _update_pairdensity_plot(ls, dropdown1,
@@ -194,13 +194,13 @@ def interactive_explore(ls):
 
     tabs = widgets.Tab()
     tabs.children = [create_distribution_plot_widget(ls),
-                     create_cdf_plot_widget(ls)]
-#                     create_pairdensity_plot_widget(ls),
+                     create_cdf_plot_widget(ls),
+                     create_pairdensity_plot_widget(ls)]
 #                     create_correlation_plot_widget(ls)]
 
     tabs.set_title(0, 'Distribution')
     tabs.set_title(1, 'CDF')
-#    tabs.set_title(2, 'Pairwise density')
+    tabs.set_title(2, 'Pairwise density')
 #    tabs.set_title(3, 'Correlation matrix')
 
     return tabs
