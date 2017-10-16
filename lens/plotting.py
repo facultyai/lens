@@ -316,8 +316,8 @@ def plot_correlation_mpl(ls, include=None, exclude=None):
         cmap='RdBu'
     )
 
-    w = len(columns) * 2.5 * 72
-    while w > 600:
+    w = len(columns) * 2.5 
+    while w > 10:
         w /= np.sqrt(1.4)
 
     fig.set_size_inches(w, w)
