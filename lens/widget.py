@@ -9,7 +9,7 @@ from IPython.display import display
 from lens.plotting import (plot_distribution,
                            plot_cdf,
                            plot_pairdensity_mpl,
-                           plot_correlation)
+                           plot_correlation_mpl)
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())
@@ -22,42 +22,6 @@ PADDING = '10px'
 PLOT_HEIGHT = 400
 PLOT_WIDTH = 600
 DPI = 72
-
-
-def render_plotly_js(fig, width=800, height=600):
-    """Return the plotly html for a plot"""
-    if isinstance(fig, plt.Axes):
-        fig = fig.figure
-    else:
-        fig = fig
-
-    if isinstance(fig, plt.Figure):
-        fig = plotly.tools.mpl_to_plotly(fig, strip_style=True, resize=True)
-
-    fig.layout['width'] = width
-    fig.layout['height'] = height
-
-    return py.plot(fig, output_type='div', include_plotlyjs=False,
-                   show_link=False)
-
-
-def create_correlation_plot_widget(ls):
-    """Return a widget with correlation plot.
-
-    Parameters
-    ----------
-    ls : :class:`~lens.Summary`
-        Lens `Summary`.
-
-    Returns
-    -------
-    :class:`ipywidgets.Widget`
-        Jupyter widget to explore correlation matrix plot.
-    """
-    fig = plot_correlation(ls)
-    return widgets.HTML(render_plotly_js(fig, width=fig.layout['width'],
-                                         height=fig.layout['height']),
-                        height='{:.0f}px'.format(fig.layout['height']))
 
 
 def update_plot(f, args, plot_area, **kwargs):
@@ -74,6 +38,31 @@ def update_plot(f, args, plot_area, **kwargs):
 
     with plot_area:
         display(fig)
+
+
+def create_correlation_plot_widget(ls):
+    """Return a widget with correlation plot.
+
+    Parameters
+    ----------
+    ls : :class:`~lens.Summary`
+        Lens `Summary`.
+
+    Returns
+    -------
+    :class:`ipywidgets.Widget`
+        Jupyter widget to explore correlation matrix plot.
+    """
+
+    plot_area = widgets.Output()
+
+    update_plot(plot_correlation_mpl,
+        [ls],
+        plot_area,
+        height=PLOT_HEIGHT, width=PLOT_HEIGHT
+        )
+
+    return plot_area
 
 
 def _update_pairdensity_plot(ls, dd1, dd2, plot_area):
@@ -195,12 +184,12 @@ def interactive_explore(ls):
     tabs = widgets.Tab()
     tabs.children = [create_distribution_plot_widget(ls),
                      create_cdf_plot_widget(ls),
-                     create_pairdensity_plot_widget(ls)]
-#                     create_correlation_plot_widget(ls)]
+                     create_pairdensity_plot_widget(ls),
+                     create_correlation_plot_widget(ls)]
 
     tabs.set_title(0, 'Distribution')
     tabs.set_title(1, 'CDF')
     tabs.set_title(2, 'Pairwise density')
-#    tabs.set_title(3, 'Correlation matrix')
+    tabs.set_title(3, 'Correlation matrix')
 
     return tabs
