@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import plotly
 import plotly.offline as py
 from ipywidgets import widgets
-
+from IPython.display import display
 from lens.plotting import (plot_distribution,
                            plot_cdf,
                            plot_pairdensity,
@@ -56,10 +56,10 @@ def create_correlation_plot_widget(ls):
                         height='{:.0f}px'.format(fig.layout['height']))
 
 
-def update_plot(f, args, html_area, **kwargs):
+def update_plot(f, args, output_widget, **kwargs):
     """Updates the content of an html_area with rendered function"""
 
-    figure = f(*args, **kwargs)    
+    figure = f(*args)    
     output_widget.clear_output()
     
     if 'height' in kwargs.keys():
