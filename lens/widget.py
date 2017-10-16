@@ -35,7 +35,7 @@ def update_plot(f, args, plot_area, **kwargs):
     dpi = kwargs.get('dpi', DPI)
 
     fig.set_size_inches(width / dpi, height / dpi)
-    
+
     plot_area.layout.height = '{:.0f}px'.format(height)
     plot_area.layout.width = '{:.0f}px'.format(width)
 
@@ -59,11 +59,8 @@ def create_correlation_plot_widget(ls):
 
     plot_area = widgets.Output()
 
-    update_plot(plot_correlation_mpl,
-        [ls],
-        plot_area,
-        height=PLOT_WIDTH, width=PLOT_WIDTH*1.3
-        )
+    update_plot(plot_correlation_mpl, [ls], plot_area,
+                height=PLOT_WIDTH, width=PLOT_WIDTH*1.3)
 
     return plot_area
 
