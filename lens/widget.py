@@ -28,13 +28,16 @@ def update_plot(f, args, plot_area, **kwargs):
     """Updates the content of an output widget with rendered function"""
 
     fig = f(*args)
-    fig.set_size_inches(PLOT_WIDTH / DPI, PLOT_HEIGHT / DPI)
     plot_area.clear_output()
 
-    if 'height' in kwargs.keys():
-        plot_area.layout.height = '{:.0f}px'.format(kwargs['height'])
-    if 'width' in kwargs.keys():
-        plot_area.layout.width = '{:.0f}px'.format(kwargs['width'])
+    height = kwargs.get('height', PLOT_HEIGHT)
+    width = kwargs.get('width', PLOT_WIDTH)
+    dpi = kwargs.get('dpi', DPI)
+
+    fig.set_size_inches(width / dpi, height / dpi)
+    
+    plot_area.layout.height = '{:.0f}px'.format(height)
+    plot_area.layout.width = '{:.0f}px'.format(width)
 
     with plot_area:
         display(fig)
@@ -59,7 +62,7 @@ def create_correlation_plot_widget(ls):
     update_plot(plot_correlation_mpl,
         [ls],
         plot_area,
-        height=PLOT_HEIGHT, width=PLOT_HEIGHT
+        height=PLOT_WIDTH, width=PLOT_WIDTH
         )
 
     return plot_area
