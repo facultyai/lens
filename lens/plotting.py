@@ -295,26 +295,16 @@ def plot_correlation_mpl(ls, include=None, exclude=None):
     else:
         annotate = True
 
-    if annotate:
-        t = np.reshape(
-            ['{:.2g}'.format(x) for x in correlation_matrix.flatten()],
-            correlation_matrix.shape
-        )[::-1].tolist()
-    else:
-        nrows, ncolumns = correlation_matrix.shape
-        t = [
-            ['' for i in range(nrows)]
-            for j in range(ncolumns)
-        ]
-
     fig, ax = plt.subplots()
     sns.heatmap(correlation_matrix,annot=annotate,
         fmt='.2g',
         ax=ax,
         xticklabels=columns, yticklabels=columns,
         vmin=-1, vmax=1,
-        cmap='RdBu'
+        cmap='BuRd'
     )
+
+    ax.xaxis.tick_top()
 
     w = len(columns) * 2.5 
     while w > 10:
