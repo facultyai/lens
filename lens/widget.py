@@ -60,20 +60,20 @@ def create_correlation_plot_widget(ls):
                         height='{:.0f}px'.format(fig.layout['height']))
 
 
-def update_plot(f, args, output_widget, **kwargs):
-    """Updates the content of an html_area with rendered function"""
+def update_plot(f, args, plot_area, **kwargs):
+    """Updates the content of an output widget with rendered function"""
 
-    figure = f(*args)
-    figure.set_size_inches(PLOT_WIDTH / DPI, PLOT_HEIGHT / DPI)
-    output_widget.clear_output()
+    fig = f(*args)
+    fig.set_size_inches(PLOT_WIDTH / DPI, PLOT_HEIGHT / DPI)
+    plot_area.clear_output()
 
     if 'height' in kwargs.keys():
-        output_widget.layout.height = '{:.0f}px'.format(kwargs['height'])
+        plot_area.layout.height = '{:.0f}px'.format(kwargs['height'])
     if 'width' in kwargs.keys():
-        output_widget.layout.width = '{:.0f}px'.format(kwargs['width'])
+        plot_area.layout.width = '{:.0f}px'.format(kwargs['width'])
 
-    with output_widget:
-        display(figure)
+    with plot_area:
+        display(fig)
 
 
 def _update_pairdensity_plot(ls, dd1, dd2, plot_area):
