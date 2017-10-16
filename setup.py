@@ -42,5 +42,6 @@ setup(
         'plotly',
         'scipy',
         'tdigest',
+        'seaborn',
     ],
 )

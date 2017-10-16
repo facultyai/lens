@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter, MaxNLocator
 import numpy as np
 import plotly.graph_objs as go
+import seaborn as sns
 try:
     import plotly.figure_factory as pff
 except ImportError:
@@ -260,6 +261,68 @@ def plot_correlation(ls, include=None, exclude=None):
 
     return fig
 
+
+def plot_correlation_mpl(ls, include=None, exclude=None):
+    """Plot the correlation matrix for numeric columns
+
+    Plot a Spearman rank order correlation coefficient matrix showing the
+    correlation between columns. The matrix is reordered to group together
+    columns that have a higher correlation coefficient.  The columns to be
+    plotted in the correlation plot can be selected through either the
+    ``include`` or ``exclude`` keyword arguments. Only one of them can be
+    given.
+
+    Parameters
+    ----------
+    ls : :class:`~lens.Summary`
+        Lens `Summary`.
+    include : list of str
+        List of columns to include in the correlation plot.
+    exclude : list of str
+        List of columns to exclude from the correlation plot.
+
+    Returns
+    -------
+    :class:`plt.Figure`
+        Matplotlib figure containing the pairwise density plot.
+    """
+
+    columns, correlation_matrix = ls.correlation_matrix(include, exclude)
+    num_cols = len(columns)
+
+    if num_cols > 10:
+        annotate = False
+    else:
+        annotate = True
+
+    if annotate:
+        t = np.reshape(
+            ['{:.2g}'.format(x) for x in correlation_matrix.flatten()],
+            correlation_matrix.shape
+        )[::-1].tolist()
+    else:
+        nrows, ncolumns = correlation_matrix.shape
+        t = [
+            ['' for i in range(nrows)]
+            for j in range(ncolumns)
+        ]
+
+    fig, ax = plt.subplots()
+    sns.heatmap(correlation_matrix,annot=annotate,
+        fmt='.2g',
+        ax=ax,
+        xticklabels=columns, yticklabels=columns,
+        vmin=-1, vmax=1,
+        cmap='RdBu'
+    )
+
+    w = len(columns) * 2.5 * 72
+    while w > 600:
+        w /= np.sqrt(1.4)
+
+    fig.set_size_inches(w, w)
+
+    return fig
 
 def plot_cdf(ls, column, N_cdf=100):
     """Plot the empirical cumulative distribution function of a column.
