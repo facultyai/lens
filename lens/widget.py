@@ -58,11 +58,17 @@ def create_correlation_plot_widget(ls):
 
 def update_plot(f, args, html_area, **kwargs):
     """Updates the content of an html_area with rendered function"""
-    html_area.value = render_plotly_js(f(*args), **kwargs)
+
+    figure = f(*args, **kwargs)    
+    output_widget.clear_output()
+    
     if 'height' in kwargs.keys():
-        html_area.height = '{:.0f}px'.format(kwargs['height'])
+        output_widget.layout.height = '{:.0f}px'.format(kwargs['height'])
     if 'width' in kwargs.keys():
-        html_area.width = '{:.0f}px'.format(kwargs['width'])
+        output_widget.layout.width = '{:.0f}px'.format(kwargs['width'])
+        
+    with output_widget:
+        display(figure)
 
 
 def _update_pairdensity_plot(ls, dd1, dd2, plot_area):
@@ -110,7 +116,7 @@ def _simple_columnwise_widget(ls, plot_function, columns):
     """Basic column-wise plot widget"""
 
     dropdown = widgets.Dropdown(options=columns, description='Column:')
-    plot_area = widgets.HTML()
+    plot_area = widget.Output()
     update_plot(plot_function, [ls, columns[0]], plot_area, height=500)
 
     dropdown.observe(lambda x: update_plot(plot_function, [ls, x['new']],
@@ -183,13 +189,13 @@ def interactive_explore(ls):
 
     tabs = widgets.Tab()
     tabs.children = [create_distribution_plot_widget(ls),
-                     create_cdf_plot_widget(ls),
-                     create_pairdensity_plot_widget(ls),
-                     create_correlation_plot_widget(ls)]
+                     create_cdf_plot_widget(ls)]
+#                     create_pairdensity_plot_widget(ls),
+#                     create_correlation_plot_widget(ls)]
 
     tabs.set_title(0, 'Distribution')
     tabs.set_title(1, 'CDF')
-    tabs.set_title(2, 'Pairwise density')
-    tabs.set_title(3, 'Correlation matrix')
+#    tabs.set_title(2, 'Pairwise density')
+#    tabs.set_title(3, 'Correlation matrix')
 
     return tabs
