@@ -297,7 +297,7 @@ def plot_correlation_mpl(ls, include=None, exclude=None):
 
     fig, ax = plt.subplots()
     sns.heatmap(correlation_matrix,annot=annotate,
-        fmt='.2g',
+        fmt='.2f',
         ax=ax,
         xticklabels=columns, yticklabels=columns,
         vmin=-1, vmax=1,
