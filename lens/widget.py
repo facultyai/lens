@@ -1,9 +1,6 @@
 from __future__ import division
 import sys
 import logging
-import matplotlib.pyplot as plt
-import plotly
-import plotly.offline as py
 from ipywidgets import widgets
 from IPython.display import display
 from lens.plotting import (plot_distribution,
@@ -174,12 +171,6 @@ def interactive_explore(ls):
                    ' Jupyter notebook')
         logger.error(message)
         raise ValueError(message)
-    else:
-        # This is a bit of a hack, but it is the only place where the state of
-        # plotly initialization is stored. We need to do it because otherwise
-        # plotly fails silently if the notebook mode is not initialized.
-        if not py.offline.__PLOTLY_OFFLINE_INITIALIZED:
-            py.init_notebook_mode()
 
     tabs = widgets.Tab()
     tabs.children = [create_distribution_plot_widget(ls),

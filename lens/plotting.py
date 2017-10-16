@@ -165,7 +165,7 @@ def plot_correlation_mpl(ls, include=None, exclude=None):
         annotate = True
 
     fig, ax = plt.subplots()
-    sns.heatmap(correlation_matrix,annot=annotate, fmt='.2f', ax=ax,
+    sns.heatmap(correlation_matrix, annot=annotate, fmt='.2f', ax=ax,
                 xticklabels=columns, yticklabels=columns, vmin=-1, vmax=1,
                 cmap='RdBu_r', square=True)
 
