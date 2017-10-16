@@ -50,7 +50,8 @@ def plot_distribution(ls, column, bins=None):
 
     fig, ax = plt.subplots()
 
-    ax.bar(edges[:-1], counts, width=np.diff(edges), label=column, alpha=0.4)
+    ax.bar(edges[:-1], counts, width=np.diff(edges), label=column, alpha=0.4,
+           align='edge')
 
     ax.set_ylim(bottom=0)
 
@@ -307,7 +308,7 @@ def plot_correlation_mpl(ls, include=None, exclude=None):
 
     ax.xaxis.tick_top()
 
-    w = len(columns) * 2.5 
+    w = len(columns) * 2.5
     while w > 10:
         w /= np.sqrt(1.4)
 
