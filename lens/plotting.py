@@ -171,6 +171,8 @@ def plot_correlation_mpl(ls, include=None, exclude=None):
 
     ax.xaxis.tick_top()
 
+    # Enforces a width of 2.5 inches per cell in the plot,
+    # unless this exceeds 600 pixels.
     w = len(columns) * 2.5
     while w > 10:
         w /= np.sqrt(1.4)
