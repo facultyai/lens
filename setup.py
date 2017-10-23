@@ -35,7 +35,7 @@ setup(
     long_description=LONG_DESCRIPTION,
     install_requires=[
         'dask[dataframe,delayed]',
-        'ipywidgets',
+        'ipywidgets>=6.0.0',
         'matplotlib',
         'numpy>=1.11',
         'pandas',
