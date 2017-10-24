@@ -1,14 +1,12 @@
+from __future__ import division
 import sys
 import logging
-import matplotlib.pyplot as plt
-import plotly
-import plotly.offline as py
 from ipywidgets import widgets
-
+from IPython.display import display
 from lens.plotting import (plot_distribution,
                            plot_cdf,
-                           plot_pairdensity,
-                           plot_correlation)
+                           plot_pairdensity_mpl,
+                           plot_correlation_mpl)
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())
@@ -18,23 +16,28 @@ logger.addHandler(logging.StreamHandler())
 IN_NOTEBOOK = 'ipykernel' in sys.modules
 
 PADDING = '10px'
+PLOT_HEIGHT = 400
+PLOT_WIDTH = 600
+DPI = 72
 
 
-def render_plotly_js(fig, width=800, height=600):
-    """Return the plotly html for a plot"""
-    if isinstance(fig, plt.Axes):
-        fig = fig.figure
-    else:
-        fig = fig
+def update_plot(f, args, plot_area, **kwargs):
+    """Updates the content of an output widget with rendered function"""
 
-    if isinstance(fig, plt.Figure):
-        fig = plotly.tools.mpl_to_plotly(fig, strip_style=True, resize=True)
+    fig = f(*args)
+    plot_area.clear_output()
 
-    fig.layout['width'] = width
-    fig.layout['height'] = height
+    height = kwargs.get('height', PLOT_HEIGHT)
+    width = kwargs.get('width', PLOT_WIDTH)
+    dpi = kwargs.get('dpi', DPI)
 
-    return py.plot(fig, output_type='div', include_plotlyjs=False,
-                   show_link=False)
+    fig.set_size_inches(width / dpi, height / dpi)
+
+    plot_area.layout.height = '{:.0f}px'.format(height)
+    plot_area.layout.width = '{:.0f}px'.format(width)
+
+    with plot_area:
+        display(fig)
 
 
 def create_correlation_plot_widget(ls):
@@ -50,24 +53,18 @@ def create_correlation_plot_widget(ls):
     :class:`ipywidgets.Widget`
         Jupyter widget to explore correlation matrix plot.
     """
-    fig = plot_correlation(ls)
-    return widgets.HTML(render_plotly_js(fig, width=fig.layout['width'],
-                                         height=fig.layout['height']),
-                        height='{:.0f}px'.format(fig.layout['height']))
 
+    plot_area = widgets.Output()
 
-def update_plot(f, args, html_area, **kwargs):
-    """Updates the content of an html_area with rendered function"""
-    html_area.value = render_plotly_js(f(*args), **kwargs)
-    if 'height' in kwargs.keys():
-        html_area.height = '{:.0f}px'.format(kwargs['height'])
-    if 'width' in kwargs.keys():
-        html_area.width = '{:.0f}px'.format(kwargs['width'])
+    update_plot(plot_correlation_mpl, [ls], plot_area,
+                height=PLOT_WIDTH, width=PLOT_WIDTH*1.3)
+
+    return plot_area
 
 
 def _update_pairdensity_plot(ls, dd1, dd2, plot_area):
     if dd1.value != dd2.value:
-        update_plot(plot_pairdensity,
+        update_plot(plot_pairdensity_mpl,
                     [ls, dd1.value, dd2.value],
                     plot_area, height=600, width=600)
 
@@ -93,7 +90,7 @@ def create_pairdensity_plot_widget(ls):
     if len(numeric_columns) > 1:
         dropdown1.value, dropdown2.value = numeric_columns[:2]
 
-    plot_area = widgets.HTML()
+    plot_area = widgets.Output()
 
     for dropdown in [dropdown1, dropdown2]:
         dropdown.observe(lambda x: _update_pairdensity_plot(ls, dropdown1,
@@ -110,11 +107,11 @@ def _simple_columnwise_widget(ls, plot_function, columns):
     """Basic column-wise plot widget"""
 
     dropdown = widgets.Dropdown(options=columns, description='Column:')
-    plot_area = widgets.HTML()
-    update_plot(plot_function, [ls, columns[0]], plot_area, height=500)
+    plot_area = widgets.Output()
+    update_plot(plot_function, [ls, columns[0]], plot_area, height=PLOT_HEIGHT)
 
     dropdown.observe(lambda x: update_plot(plot_function, [ls, x['new']],
-                                           plot_area, height=500),
+                                           plot_area, height=PLOT_HEIGHT),
                      names='value', type='change')
 
     return widgets.VBox([dropdown, plot_area], padding=PADDING)
@@ -174,12 +171,6 @@ def interactive_explore(ls):
                    ' Jupyter notebook')
         logger.error(message)
         raise ValueError(message)
-    else:
-        # This is a bit of a hack, but it is the only place where the state of
-        # plotly initialization is stored. We need to do it because otherwise
-        # plotly fails silently if the notebook mode is not initialized.
-        if not py.offline.__PLOTLY_OFFLINE_INITIALIZED:
-            py.init_notebook_mode()
 
     tabs = widgets.Tab()
     tabs.children = [create_distribution_plot_widget(ls),

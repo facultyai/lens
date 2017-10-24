@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
+from matplotlib.ticker import FuncFormatter, MaxNLocator
 import numpy as np
 import plotly.graph_objs as go
+import seaborn as sns
 try:
     import plotly.figure_factory as pff
 except ImportError:
@@ -48,7 +50,8 @@ def plot_distribution(ls, column, bins=None):
 
     fig, ax = plt.subplots()
 
-    ax.bar(edges[:-1], counts, width=np.diff(edges), label=column, alpha=0.4)
+    ax.bar(edges[:-1], counts, width=np.diff(edges), label=column,
+           align='edge')
 
     ax.set_ylim(bottom=0)
 
@@ -56,6 +59,163 @@ def plot_distribution(ls, column, bins=None):
     ax.set_title('Distribution of column "{}"'.format(column))
 
     ax.figure.tight_layout()
+
+    return fig
+
+
+def _set_integer_tick_labels(axis, labels):
+    """Use labels dict to set labels on axis"""
+    axis.set_major_formatter(FuncFormatter(lambda x, _: labels.get(x, '')))
+    axis.set_major_locator(MaxNLocator(integer=True))
+
+
+def plot_pairdensity_mpl(ls, column1, column2):
+    """Plot the pairwise density between two columns.
+
+    This plot is an approximation of a scatterplot through a 2D Kernel
+    Density Estimate for two numerical variables. When one of the variables
+    is categorical, a 1D KDE for each of the categories is shown,
+    normalised to the total number of non-null observations. For two
+    categorical variables, the plot produced is a heatmap representation of
+    the contingency table.
+
+    Parameters
+    ----------
+    ls : :class:`~lens.Summary`
+        Lens `Summary`.
+    column1 : str
+        First column.
+    column2 : str
+        Second column.
+
+    Returns
+    -------
+    :class:`plt.Figure`
+        Matplotlib figure containing the pairwise density plot.
+    """
+    pair_details = ls.pair_details(column1, column2)
+    pairdensity = pair_details['pairdensity']
+
+    x = np.array(pairdensity['x'])
+    y = np.array(pairdensity['y'])
+    Z = np.array(pairdensity['density'])
+
+    fig, ax = plt.subplots()
+
+    if ls.summary(column1)['desc'] == 'categorical':
+        idx = np.argsort(x)
+        x = x[idx]
+        Z = Z[:, idx]
+        # Create labels and positions for categorical axis
+        x_labels = dict(enumerate(x))
+        _set_integer_tick_labels(ax.xaxis, x_labels)
+        x = np.arange(-0.5, len(x), 1.0)
+
+    if ls.summary(column2)['desc'] == 'categorical':
+        idx = np.argsort(y)
+        y = y[idx]
+        Z = Z[idx]
+        y_labels = dict(enumerate(y))
+        _set_integer_tick_labels(ax.yaxis, y_labels)
+        y = np.arange(-0.5, len(y), 1.0)
+
+    X, Y = np.meshgrid(x, y)
+
+    ax.pcolormesh(X, Y, Z, cmap=DEFAULT_COLORSCALE.lower())
+
+    ax.set_xlabel(column1)
+    ax.set_ylabel(column2)
+
+    ax.set_title(r'$\it{{ {} }}$ vs $\it{{ {} }}$'.format(column1, column2))
+
+    return fig
+
+
+def plot_correlation_mpl(ls, include=None, exclude=None):
+    """Plot the correlation matrix for numeric columns
+
+    Plot a Spearman rank order correlation coefficient matrix showing the
+    correlation between columns. The matrix is reordered to group together
+    columns that have a higher correlation coefficient.  The columns to be
+    plotted in the correlation plot can be selected through either the
+    ``include`` or ``exclude`` keyword arguments. Only one of them can be
+    given.
+
+    Parameters
+    ----------
+    ls : :class:`~lens.Summary`
+        Lens `Summary`.
+    include : list of str
+        List of columns to include in the correlation plot.
+    exclude : list of str
+        List of columns to exclude from the correlation plot.
+
+    Returns
+    -------
+    :class:`plt.Figure`
+        Matplotlib figure containing the pairwise density plot.
+    """
+
+    columns, correlation_matrix = ls.correlation_matrix(include, exclude)
+    num_cols = len(columns)
+
+    if num_cols > 10:
+        annotate = False
+    else:
+        annotate = True
+
+    fig, ax = plt.subplots()
+    sns.heatmap(correlation_matrix, annot=annotate, fmt='.2f', ax=ax,
+                xticklabels=columns, yticklabels=columns, vmin=-1, vmax=1,
+                cmap='RdBu_r', square=True)
+
+    ax.xaxis.tick_top()
+
+    # Enforces a width of 2.5 inches per cell in the plot,
+    # unless this exceeds 10 inches.
+    width_inches = len(columns) * 2.5
+    while width_inches > 10:
+        width_inches = 10
+
+    fig.set_size_inches(width_inches, width_inches)
+
+    return fig
+
+
+def plot_cdf(ls, column, N_cdf=100):
+    """Plot the empirical cumulative distribution function of a column.
+
+    Creates a plotly plot with the empirical CDF of a column.
+
+    Parameters
+    ----------
+    ls : :class:`~lens.Summary`
+        Lens `Summary`.
+    column : str
+        Name of the column.
+    N_cdf : int
+        Number of points in the CDF plot.
+
+    Returns
+    -------
+    :class:`~matplotlib.Axes`
+        Matplotlib axes containing the distribution plot.
+    """
+    tdigest = ls.tdigest(column)
+
+    cdfs = np.linspace(0, 100, N_cdf)
+    xs = [tdigest.percentile(p) for p in cdfs]
+
+    fig, ax = plt.subplots()
+
+    ax.set_ylabel('Percentile')
+    ax.set_xlabel(column)
+    ax.plot(xs, cdfs)
+
+    if ls._report['column_summary'][column]['logtrans']:
+        ax.set_xscale('log')
+
+    ax.set_title('Empirical Cumulative Distribution Function')
 
     return fig
 
@@ -188,43 +348,5 @@ def plot_correlation(ls, include=None, exclude=None):
     fig.layout['width'] = w
     fig.layout['height'] = w
     fig.data[0]['showscale'] = True
-
-    return fig
-
-
-def plot_cdf(ls, column, N_cdf=100):
-    """Plot the empirical cumulative distribution function of a column.
-
-    Creates a plotly plot with the empirical CDF of a column.
-
-    Parameters
-    ----------
-    ls : :class:`~lens.Summary`
-        Lens `Summary`.
-    column : str
-        Name of the column.
-    N_cdf : int
-        Number of points in the CDF plot.
-
-    Returns
-    -------
-    :class:`~matplotlib.Axes`
-        Matplotlib axes containing the distribution plot.
-    """
-    tdigest = ls.tdigest(column)
-
-    cdfs = np.linspace(0, 100, N_cdf)
-    xs = [tdigest.percentile(p) for p in cdfs]
-
-    fig, ax = plt.subplots()
-
-    ax.set_ylabel('Percentile')
-    ax.set_xlabel(column)
-    ax.plot(xs, cdfs)
-
-    if ls._report['column_summary'][column]['logtrans']:
-        ax.set_xscale('log')
-
-    ax.set_title('Empirical Cumulative Distribution Function')
 
     return fig
