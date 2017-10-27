@@ -11,7 +11,7 @@ import scipy.interpolate
 
 from dask.multiprocessing import get as get_multiprocessing
 from dask.threaded import get as get_threaded
-from dask.async import get_sync
+from dask.local import get_sync
 
 from .dask_graph import create_dask_graph
 from .tdigest_utils import tdigest_from_centroids
