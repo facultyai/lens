@@ -3,10 +3,7 @@ from matplotlib.ticker import FuncFormatter, MaxNLocator
 import numpy as np
 import plotly.graph_objs as go
 import seaborn as sns
-try:
-    import plotly.figure_factory as pff
-except ImportError:
-    from plotly.tools import FigureFactory as pff
+import plotly.figure_factory as pff
 
 DEFAULT_COLORSCALE = 'Viridis'
 

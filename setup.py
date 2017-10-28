@@ -39,7 +39,7 @@ setup(
         'matplotlib',
         'numpy>=1.11',
         'pandas',
-        'plotly',
+        'plotly>=2.0.0',
         'scipy',
         'tdigest',
         'seaborn',
