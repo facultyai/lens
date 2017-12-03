@@ -8,6 +8,10 @@ data set were almost formulaic: What data type is in this column? How many null
 values are there? Which columns are correlated? What's the distribution of this
 value? ``lens`` calculates all this for you.
 
+See the documentation_ for more details.
+
+.. _documentation: https://lens.readthedocs.io/en/latest
+
 Installation
 ------------
 
