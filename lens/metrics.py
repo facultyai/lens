@@ -86,7 +86,8 @@ def column_properties(series):
     name = series.name
     colresult = {}
     colresult['dtype'] = str(series.dtype)
-    colresult['nulls'] = int(series.isnull().sum())
+    nulls = series.isnull().sum()
+    colresult['nulls'] = int(nulls) if not np.isnan(nulls) else 0
     notnulls = series.dropna()
 
     colresult['notnulls'] = len(notnulls.index)
