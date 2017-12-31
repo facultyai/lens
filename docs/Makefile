@@ -23,7 +23,6 @@ I18NSPHINXOPTS  = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) source
 help:
 	@echo "Please use \`make <target>' where <target> is one of"
 	@echo "  html       to make standalone HTML files"
-	@echo "  deploy     deploy to docs server"
 
 .PHONY: clean
 clean:
@@ -34,7 +33,3 @@ html:
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
-
-.PHONY: deploy
-deploy:
-	rsync -av --delete build/html/ docs.asidata.science:/var/www/html/lens
