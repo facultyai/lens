@@ -16,6 +16,7 @@ MANIFEST
 htmlcov
 .coverage
 .eggs
+.pytest_cache
 
 # Sphinx
 _build
