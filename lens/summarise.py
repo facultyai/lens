@@ -26,15 +26,19 @@ class EmptyDataFrameError(Exception):
     pass
 
 
-def _validate_report(report):
+def _validate_report(report, schema_version):
     """Validates a dict report"""
-    report_version = report['_version']
-    if report_version != __version__:
-        raise LensSummaryError('The version of the report format {} does not '
-                               'match the version of lens {}. Until the '
-                               'report format is deemed stable these two '
-                               'need to match.'.format(report_version,
-                                                       __version__))
+    report_schema_version = report.get('_schema_version')
+    if (report_schema_version is not None and
+            report_schema_version != schema_version):
+        raise LensSummaryError('The version of the report schema `{}` does '
+                               'not match the schema version `{}` supported '
+                               'by this version of lens {}.'.format(
+                                   report_schema_version,
+                                   schema_version,
+                                   __version__
+                               ))
+
     columns = report['_columns']
     column_props = report['column_properties']
     num_cols = [col for col in columns if (column_props[col]['numeric'])]
@@ -67,11 +71,16 @@ class Summary(object):
     in a Jupyter notebook.
 
     """
+    schema_version = 1
+
     def __init__(self, report):
         if not isinstance(report, dict):
             raise TypeError('report argument must be a dict')
 
-        _validate_report(report)
+        if '_schema_version' not in report.keys():
+            report['_schema_version'] = self.schema_version
+
+        _validate_report(report, schema_version=self.schema_version)
         self._report = report
 
     @staticmethod
@@ -809,10 +818,6 @@ def summarise(df, scheduler='multiprocessing', num_workers=None,
     report['_run_time'] = time.time() - tstart
 
     report['_lens_version'] = __version__
-
-    # _version is the version of the report format. Until this format is stable
-    # we will use the version of lens
-    report['_version'] = __version__
 
     if size is not None:
         report['size'] = size
