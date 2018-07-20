@@ -750,8 +750,8 @@ def summarise(df, scheduler='multiprocessing', num_workers=None,
     df : pd.DataFrame
         DataFrame to be analysed.
     scheduler : str, optional
-        Dask scheduler to use. Must be one of ['multiprocessing',
-        'threaded', 'sync'].
+        Dask scheduler to use. Must be one of [distributed, multiprocessing,
+        processes, single-threaded, sync, synchronous, threading, threads].
     num_workers : int or None, optional
         Number of workers in the pool. If the environment variable `NUM_CPUS`
         is set that number will be used, otherwise it will use as many workers
