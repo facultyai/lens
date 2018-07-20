@@ -7,12 +7,6 @@ import numpy as np
 import logging
 import json
 
-import scipy.interpolate
-
-from dask.multiprocessing import get as get_multiprocessing
-from dask.threaded import get as get_threaded
-from dask.local import get_sync
-
 from .dask_graph import create_dask_graph
 from .tdigest_utils import tdigest_from_centroids
 from .utils import hierarchical_ordering
@@ -796,15 +790,7 @@ def summarise(df, scheduler='multiprocessing', num_workers=None,
             # NUM_CPUS not in environment
             num_workers = None
 
-    schedulers = {'multiprocessing': get_multiprocessing,
-                  'threaded': get_threaded,
-                  'sync': get_sync}
-
-    try:
-        kwargs = {'get': schedulers[scheduler]}
-    except KeyError:
-        raise KeyError('`scheduler` must be one of {}'
-                       .format(schedulers.keys()))
+    kwargs = {'scheduler': scheduler}
     if num_workers is not None:
         kwargs['num_workers'] = num_workers
 

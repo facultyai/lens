@@ -34,7 +34,7 @@ setup(
     zip_safe=False,
     long_description=LONG_DESCRIPTION,
     install_requires=[
-        'dask[dataframe,delayed]>=0.15.0',
+        'dask[dataframe,delayed]>=0.18.0',
         'ipywidgets>=6.0.0',
         'matplotlib',
         'numpy>=1.11',
