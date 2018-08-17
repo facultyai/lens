@@ -313,7 +313,7 @@ def test_dask_compute_graph_default(report):
 @pytest.mark.parametrize('scheduler,num_workers,pairdensities', [
     ('sync', None, True),
     ('multiprocessing', 2, True),
-    ('threaded', None, True),
+    ('threading', None, True),
     ('multiprocessing', 4, False),
 ])
 def test_dask_compute_graph(df, scheduler, num_workers, pairdensities):
