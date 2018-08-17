@@ -55,7 +55,7 @@ def test_one_row_dataframe():
         ('d', [datetime.datetime.now()])
     ]
     columns = sorted([item[0] for item in items])
-    df = pd.DataFrame.from_items(items)
+    df = pd.DataFrame.from_dict(dict(items))
     report = summarise(df)._report
     assert sorted(report['_columns']) == columns
     column_properties = report['column_properties']
@@ -313,7 +313,7 @@ def test_dask_compute_graph_default(report):
 @pytest.mark.parametrize('scheduler,num_workers,pairdensities', [
     ('sync', None, True),
     ('multiprocessing', 2, True),
-    ('threaded', None, True),
+    ('threading', None, True),
     ('multiprocessing', 4, False),
 ])
 def test_dask_compute_graph(df, scheduler, num_workers, pairdensities):
@@ -340,10 +340,10 @@ def test_empty_df():
 @pytest.fixture
 def small_df():
     N = 100
-    df = pd.DataFrame.from_items([
-        ('foo', np.random.randn(N)),
-        ('bar', np.random.randint(10, size=N))
-    ])
+    df = pd.DataFrame.from_dict({
+        'foo': np.random.randn(N),
+        'bar': np.random.randint(10, size=N)
+    })
     return df
 
 

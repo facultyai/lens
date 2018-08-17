@@ -174,7 +174,7 @@ def test_correlation_matrix(report, ls, col1, col2):
 
 def test_correlation_matrix_one_column():
     column_values = np.random.ranf(size=200)
-    df = pd.DataFrame.from_items([('a', column_values)])
+    df = pd.DataFrame.from_dict({'a': column_values})
     summary = summarise(df)
     columns, correlation_matrix = summary.correlation_matrix()
     assert columns == ['a']
@@ -185,10 +185,10 @@ def test_correlation_matrix_one_column():
 def test_correlation_matrix_two_columns():
     column1_values = np.random.ranf(size=200)
     column2_values = np.random.ranf(size=200)
-    df = pd.DataFrame.from_items([
-        ('a', column1_values),
-        ('b', column2_values)
-    ])
+    df = pd.DataFrame.from_dict({
+        'a': column1_values,
+        'b': column2_values
+    })
     summary = summarise(df)
     columns, correlation_matrix = summary.correlation_matrix()
     assert sorted(columns) == ['a', 'b']
@@ -204,7 +204,7 @@ def test_correlation_matrix_two_columns():
 def test_correlation_matrix_three_columns():
     column_values = [np.random.ranf(size=200) for i in range(3)]
     column_headers = ['a', 'b', 'c']
-    df = pd.DataFrame.from_items(zip(column_headers, column_values))
+    df = pd.DataFrame.from_dict(dict(zip(column_headers, column_values)))
     summary = summarise(df)
     columns, correlation_matrix = summary.correlation_matrix()
     assert sorted(columns) == column_headers

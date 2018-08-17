@@ -34,14 +34,14 @@ setup(
     zip_safe=False,
     long_description=LONG_DESCRIPTION,
     install_requires=[
-        'dask[dataframe,delayed]>=0.15.0',
+        'dask[dataframe,delayed]>=0.18.0',
         'ipywidgets>=6.0.0',
         'matplotlib',
         'numpy>=1.11',
         'pandas',
-        'plotly>=2.0.0',
+        'plotly>=3.0.0',
         'scipy',
-        'tdigest',
+        'tdigest>=0.5.0',
         'seaborn',
     ],
 )

@@ -188,7 +188,7 @@ def _tdigest_norm_kstest(digest):
     normdigest = _tdigest_normalise(digest)
 
     x = np.linspace(-3, 3, 500)
-    dig_q = np.array([normdigest.quantile(xx) for xx in x])
+    dig_q = np.array([normdigest.cdf(xx) for xx in x])
     norm_q = stats.norm.cdf(x)
 
     D = np.max(np.abs(dig_q - norm_q))
@@ -741,7 +741,7 @@ def pairdensity(df, column_props, column_summ, freq, log_transform=True):
     bandwidths = [None, None]
     for col in [col1, col2]:
         if column_props[col]['is_categorical']:
-            scales.append('cat')
+            scales.append('category')
             coord_ranges.append(None)
             categories.append(sorted(list(freq[col][col].keys())))
         else:
@@ -751,7 +751,7 @@ def pairdensity(df, column_props, column_summ, freq, log_transform=True):
                 [column_summ[col][col][extreme] for extreme in ['min', 'max']])
             categories.append(None)
 
-    Ncat = np.sum([scale == 'cat' for scale in scales])
+    Ncat = np.sum([scale == 'category' for scale in scales])
 
     if N == 0:
         logger.warning('{}: No valid pairs found!'.format(log_string))

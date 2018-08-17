@@ -1,17 +1,13 @@
 """Summarise a Pandas DataFrame"""
 
-import time
-import os
-import pandas as pd
-import numpy as np
-import logging
 import json
+import logging
+import os
+import time
 
-import scipy.interpolate
-
-from dask.multiprocessing import get as get_multiprocessing
-from dask.threaded import get as get_threaded
-from dask.local import get_sync
+import numpy as np
+import pandas as pd
+import scipy
 
 from .dask_graph import create_dask_graph
 from .tdigest_utils import tdigest_from_centroids
@@ -612,7 +608,7 @@ class Summary(object):
             Function representing the cdf.
         """
         tdigest = self.tdigest(column)
-        return tdigest.quantile
+        return tdigest.cdf
 
     def correlation_matrix(self, include=None, exclude=None):
         """ Correlation matrix for numeric columns
@@ -756,8 +752,8 @@ def summarise(df, scheduler='multiprocessing', num_workers=None,
     df : pd.DataFrame
         DataFrame to be analysed.
     scheduler : str, optional
-        Dask scheduler to use. Must be one of ['multiprocessing',
-        'threaded', 'sync'].
+        Dask scheduler to use. Must be one of [distributed, multiprocessing,
+        processes, single-threaded, sync, synchronous, threading, threads].
     num_workers : int or None, optional
         Number of workers in the pool. If the environment variable `NUM_CPUS`
         is set that number will be used, otherwise it will use as many workers
@@ -796,15 +792,7 @@ def summarise(df, scheduler='multiprocessing', num_workers=None,
             # NUM_CPUS not in environment
             num_workers = None
 
-    schedulers = {'multiprocessing': get_multiprocessing,
-                  'threaded': get_threaded,
-                  'sync': get_sync}
-
-    try:
-        kwargs = {'get': schedulers[scheduler]}
-    except KeyError:
-        raise KeyError('`scheduler` must be one of {}'
-                       .format(schedulers.keys()))
+    kwargs = {'scheduler': scheduler}
     if num_workers is not None:
         kwargs['num_workers'] = num_workers
 
