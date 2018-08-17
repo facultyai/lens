@@ -1,11 +1,13 @@
 """Summarise a Pandas DataFrame"""
 
-import time
-import os
-import pandas as pd
-import numpy as np
-import logging
 import json
+import logging
+import os
+import time
+
+import numpy as np
+import pandas as pd
+import scipy
 
 from .dask_graph import create_dask_graph
 from .tdigest_utils import tdigest_from_centroids
