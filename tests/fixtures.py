@@ -39,7 +39,7 @@ def df(request):
         ('nulls', [np.nan, ] * nrows)
     ]
 
-    df = pd.DataFrame.from_items(items)
+    df = pd.DataFrame.from_dict(dict(items))
 
     # sprinkle nrows/50 nulls
     ncols = len(df.columns)
