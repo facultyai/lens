@@ -41,7 +41,7 @@ setup(
         'pandas',
         'plotly>=3.0.0',
         'scipy',
-        'tdigest',
+        'tdigest>=0.5.0',
         'seaborn',
     ],
 )

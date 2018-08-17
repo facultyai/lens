@@ -188,7 +188,7 @@ def _tdigest_norm_kstest(digest):
     normdigest = _tdigest_normalise(digest)
 
     x = np.linspace(-3, 3, 500)
-    dig_q = np.array([normdigest.quantile(xx) for xx in x])
+    dig_q = np.array([normdigest.cdf(xx) for xx in x])
     norm_q = stats.norm.cdf(x)
 
     D = np.max(np.abs(dig_q - norm_q))

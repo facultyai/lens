@@ -612,7 +612,7 @@ class Summary(object):
             Function representing the cdf.
         """
         tdigest = self.tdigest(column)
-        return tdigest.quantile
+        return tdigest.cdf
 
     def correlation_matrix(self, include=None, exclude=None):
         """ Correlation matrix for numeric columns
