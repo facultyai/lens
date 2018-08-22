@@ -96,7 +96,7 @@ def column_properties(series):
     unique = notnulls.unique().size
     colresult['unique'] = unique
     colresult['is_categorical'] = False
-    if (colresult['dtype'] in set(['object', 'int64', 'float64']) and
+    if (colresult['dtype'] in {'object', 'int64', 'float64'} and
             colresult['notnulls'] > 0):
         # In Pandas integers with nulls are cast as floats, so we have
         # to include floats as possible categoricals to detect
