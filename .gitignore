@@ -17,6 +17,7 @@ htmlcov
 .coverage
 .eggs
 .pytest_cache
+.mypy_cache/
 
 # Sphinx
 _build
