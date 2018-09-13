@@ -32,8 +32,9 @@ def _nested_merge(first, second, path=None):
             elif first[key] == second[key]:
                 pass  # Same leaf value.
             else:
-                raise Exception('Conflict at {}'.format('.'.join(path + [str(
-                    key)])))
+                raise Exception(
+                    "Conflict at {}".format(".".join(path + [str(key)]))
+                )
         else:
             first[key] = second[key]
     return first
@@ -51,21 +52,25 @@ def _join_dask_results(results):
     results : list
         List of Dask results dictionaries to join.
     """
-    report = {'_run_time': 0.0, '_columns': []}
+    report = {"_run_time": 0.0, "_columns": []}
 
     for result in results:
         if isinstance(result, Delayed):
             result = result.compute()
         if result is not None:
-            report['_run_time'] += result['_run_time']
-            report['_columns'] += result['_columns']
+            report["_run_time"] += result["_run_time"]
+            report["_columns"] += result["_columns"]
             columns = result.keys()
             report = _nested_merge(
-                report, {column: result[column]
-                         for column in columns
-                         if column not in ['_columns', '_run_time']})
+                report,
+                {
+                    column: result[column]
+                    for column in columns
+                    if column not in ["_columns", "_run_time"]
+                },
+            )
 
-    report['_columns'] = sorted(list(set(report['_columns'])))
+    report["_columns"] = sorted(list(set(report["_columns"])))
 
     return report
 
@@ -99,12 +104,14 @@ def create_dask_graph(df, pairdensities=True):
     cprops = {k: delayed(metrics.column_properties)(cols[k]) for k in columns}
     joined_cprops = _join_dask_results(list(cprops.values()))
 
-    freqs = {k: delayed(metrics.frequencies)(cols[k], cprops[k])
-             for k in columns}
+    freqs = {
+        k: delayed(metrics.frequencies)(cols[k], cprops[k]) for k in columns
+    }
     joined_freqs = _join_dask_results(list(freqs.values()))
 
-    csumms = {k: delayed(metrics.column_summary)(cols[k], cprops[k])
-              for k in columns}
+    csumms = {
+        k: delayed(metrics.column_summary)(cols[k], cprops[k]) for k in columns
+    }
     joined_csumms = _join_dask_results(list(csumms.values()))
 
     out = {k: delayed(metrics.outliers)(cols[k], csumms[k]) for k in columns}
@@ -119,20 +126,23 @@ def create_dask_graph(df, pairdensities=True):
             pdens_cp = {k: cprops[k] for k in [col1, col2]}
             pdens_cs = {k: csumms[k] for k in [col1, col2]}
             pdens_fr = {k: freqs[k] for k in [col1, col2]}
-            pdens = delayed(metrics.pairdensity)(pdens_df, pdens_cp, pdens_cs,
-                                                 pdens_fr)
+            pdens = delayed(metrics.pairdensity)(
+                pdens_df, pdens_cp, pdens_cs, pdens_fr
+            )
             pdens_results.append(pdens)
 
     joined_pairdensities = _join_dask_results(pdens_results)
 
     # Join the delayed reports per-metric into a dictionary.
-    dask_dict = delayed(dict)(row_count=row_c,
-                              column_properties=joined_cprops,
-                              frequencies=joined_freqs,
-                              column_summary=joined_csumms,
-                              outliers=joined_outliers,
-                              correlation=corr,
-                              pairdensity=joined_pairdensities,
-                              _columns=list(columns))
+    dask_dict = delayed(dict)(
+        row_count=row_c,
+        column_properties=joined_cprops,
+        frequencies=joined_freqs,
+        column_summary=joined_csumms,
+        outliers=joined_outliers,
+        correlation=corr,
+        pairdensity=joined_pairdensities,
+        _columns=list(columns),
+    )
 
     return dask_dict
