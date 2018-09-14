@@ -37,9 +37,9 @@ import sys
 
 class JupyterTable(object):
 
-    _valid_borders = {'left', 'right', 'top', 'bottom', 'all'}
+    _valid_borders = {"left", "right", "top", "bottom", "all"}
 
-    def __init__(self, array, caption=''):
+    def __init__(self, array, caption=""):
         self.array = array
         self.caption = caption
 
@@ -49,11 +49,12 @@ class JupyterTable(object):
         # Check that array is well formed
         for row in array:
             if len(row) != self._num_columns:
-                raise ValueError('Array rows must all be of equal length.')
+                raise ValueError("Array rows must all be of equal length.")
 
-        self._cell_styles = [[{'float_format': '%0.4f'}
-                              for dummy in range(self._num_columns)]
-                             for dummy2 in range(self._num_rows)]
+        self._cell_styles = [
+            [{"float_format": "%0.4f"} for dummy in range(self._num_columns)]
+            for dummy2 in range(self._num_rows)
+        ]
 
     def _repr_html_(self):
         """Jupyter display protocol: HTML representation.
@@ -62,75 +63,85 @@ class JupyterTable(object):
         representation of this object.
         """
         # Generate TABLE tag (<tr>)
-        html = (self.caption +
-                '<table border="1" cellpadding="3" cellspacing="0" ' +
-                ' style="border:1px solid black;border-collapse:collapse;">')
+        html = (
+            self.caption
+            + '<table border="1" cellpadding="3" cellspacing="0" '
+            + ' style="border:1px solid black;border-collapse:collapse;">'
+        )
 
         for row, row_data in enumerate(self.array):
 
             # Generate ROW tag (<tr>)
-            html += '<tr>'
+            html += "<tr>"
             for (column, item) in enumerate(row_data):
-                if not _key_is_valid(self._cell_styles[row][column],
-                                     'suppress'):
+                if not _key_is_valid(
+                    self._cell_styles[row][column], "suppress"
+                ):
 
                     # Generate CELL tag (<td>)
                     # Apply floating point formatter to the cell contents
                     # (if it is a float)
-                    item_html = self._formatter(item,
-                                                self._cell_styles[row][column])
+                    item_html = self._formatter(
+                        item, self._cell_styles[row][column]
+                    )
 
                     # Add bold and italic tags if set
-                    if _key_is_valid(self._cell_styles[row][column], 'bold'):
-                        item_html = '<b>' + item_html + '</b>'
-                    if _key_is_valid(self._cell_styles[row][column], 'italic'):
-                        item_html = '<i>' + item_html + '</i>'
+                    if _key_is_valid(self._cell_styles[row][column], "bold"):
+                        item_html = "<b>" + item_html + "</b>"
+                    if _key_is_valid(self._cell_styles[row][column], "italic"):
+                        item_html = "<i>" + item_html + "</i>"
 
                     # Get html style string
-                    style_html = self._get_style_html(self._cell_styles[row][
-                        column])
+                    style_html = self._get_style_html(
+                        self._cell_styles[row][column]
+                    )
 
                     # Append cell
-                    html += '<td' + style_html + '>' + item_html + '</td>'
-            html += '</tr>'
-        html += '</table>'
+                    html += "<td" + style_html + ">" + item_html + "</td>"
+            html += "</tr>"
+        html += "</table>"
         return html
 
     def _get_style_html(self, style_dict):
         """Parse the style dictionary and return equivalent html style text."""
-        style_html = ''
-        if _key_is_valid(style_dict, 'color'):
-            style_html += 'background-color:' + style_dict['color'] + ';'
+        style_html = ""
+        if _key_is_valid(style_dict, "color"):
+            style_html += "background-color:" + style_dict["color"] + ";"
 
-        if _key_is_valid(style_dict, 'thick_border'):
-            for edge in self._split_by_comma(style_dict['thick_border']):
-                style_html += 'border-%s: 3px solid black;' % edge
+        if _key_is_valid(style_dict, "thick_border"):
+            for edge in self._split_by_comma(style_dict["thick_border"]):
+                style_html += "border-%s: 3px solid black;" % edge
 
-        if _key_is_valid(style_dict, 'no_border'):
-            for edge in self._split_by_comma(style_dict['no_border']):
-                style_html += 'border-%s: 1px solid transparent;' % edge
+        if _key_is_valid(style_dict, "no_border"):
+            for edge in self._split_by_comma(style_dict["no_border"]):
+                style_html += "border-%s: 1px solid transparent;" % edge
 
-        if _key_is_valid(style_dict, 'align'):
-            style_html += 'text-align:' + str(style_dict['align']) + ';'
+        if _key_is_valid(style_dict, "align"):
+            style_html += "text-align:" + str(style_dict["align"]) + ";"
 
-        if _key_is_valid(style_dict, 'width'):
-            style_html += 'width:' + str(style_dict['width']) + 'px;'
+        if _key_is_valid(style_dict, "width"):
+            style_html += "width:" + str(style_dict["width"]) + "px;"
 
         if style_html:
             style_html = ' style="' + style_html + '"'
 
-        if _key_is_valid(style_dict, 'row_span'):
-            style_html = 'rowspan="' + str(style_dict['row_span']) + \
-                '";' + style_html
+        if _key_is_valid(style_dict, "row_span"):
+            style_html = (
+                'rowspan="' + str(style_dict["row_span"]) + '";' + style_html
+            )
 
-        if _key_is_valid(style_dict, 'column_span'):
-            style_html = 'colspan="' + str(style_dict['column_span']) + \
-                '";' + style_html
+        if _key_is_valid(style_dict, "column_span"):
+            style_html = (
+                'colspan="'
+                + str(style_dict["column_span"])
+                + '";'
+                + style_html
+            )
 
         # Prepend a space if non-blank
         if style_html:
-            return ' ' + style_html
-        return ''
+            return " " + style_html
+        return ""
 
     def _formatter(self, item, cell_style):
         """Apply formatting to cell contents.
@@ -142,9 +153,11 @@ class JupyterTable(object):
 
         # The following check is performed as a string comparison
         # so that ipy_table does not need to require (import) numpy.
-        if (str(type(item)) in ["<type 'float'>", "<type 'numpy.float64'>"] and
-                'float_format' in cell_style):
-            text = cell_style['float_format'] % item
+        if (
+            str(type(item)) in ["<type 'float'>", "<type 'numpy.float64'>"]
+            and "float_format" in cell_style
+        ):
+            text = cell_style["float_format"] % item
         else:
             if isinstance(item, str):
                 text = item
@@ -153,17 +166,17 @@ class JupyterTable(object):
 
         if sys.version_info.major < 3:
             # QA disabled as unicode is a NameError in Python 3.
-            text = unicode(text, encoding='utf-8')  # noqa
+            text = unicode(text, encoding="utf-8")  # noqa
 
         # If cell wrapping is not specified
-        if not ('wrap' in cell_style and cell_style['wrap']):
+        if not ("wrap" in cell_style and cell_style["wrap"]):
             # Convert all spaces to non-breaking and return
-            text = text.replace(' ', '&nbsp')
+            text = text.replace(" ", "&nbsp")
         return text
 
     def _split_by_comma(self, comma_delimited_text):
         """Returns a list of the words in the comma delimited text."""
-        return comma_delimited_text.replace(' ', '').split(',')
+        return comma_delimited_text.replace(" ", "").split(",")
 
 
 def _key_is_valid(dictionary, key):

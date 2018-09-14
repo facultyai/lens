@@ -15,28 +15,31 @@ import pytest
 np.random.seed(4712)
 
 dirname = os.path.dirname(
-    os.path.abspath(inspect.getfile(inspect.currentframe())))
+    os.path.abspath(inspect.getfile(inspect.currentframe()))
+)
 
 
-@pytest.fixture(scope='module', params=[10, 60, 500, 2000])
+@pytest.fixture(scope="module", params=[10, 60, 500, 2000])
 def df(request):
     nrows = request.param
     n1 = np.random.randn(nrows) * 3 + 20.
     n2 = np.random.randn(nrows) * 5 + 30.
     poisson = np.random.poisson(10, nrows)
     items = [
-        ('normal', n1 + n2), ('normal2', n1 - n2),
-        ('uniform', np.random.random(nrows)),
-        ('lognormal', stats.lognorm.rvs(5, scale=10, size=nrows)),
-        ('poisson', poisson),
-        ('categorical13', gen_poisson_distributed_categorical_data(13, nrows)),
-        ('categorical5', gen_uniformly_distributed_categorical_data(5, nrows)),
-        ('categorical2', np.random.randint(0, 2, nrows)),
-        ('categoricalint', gen_categoricalint_with_no_twos(nrows)),
-        ('ID', ['ID{}'.format(x) for x in range(int(1e3), int(1e3 + nrows))]),
-        ('datetimes', gen_datetime_strings(nrows)),
-        ('dates', gen_date_strings(nrows)), ('times', gen_time_strings(nrows)),
-        ('nulls', [np.nan, ] * nrows)
+        ("normal", n1 + n2),
+        ("normal2", n1 - n2),
+        ("uniform", np.random.random(nrows)),
+        ("lognormal", stats.lognorm.rvs(5, scale=10, size=nrows)),
+        ("poisson", poisson),
+        ("categorical13", gen_poisson_distributed_categorical_data(13, nrows)),
+        ("categorical5", gen_uniformly_distributed_categorical_data(5, nrows)),
+        ("categorical2", np.random.randint(0, 2, nrows)),
+        ("categoricalint", gen_categoricalint_with_no_twos(nrows)),
+        ("ID", ["ID{}".format(x) for x in range(int(1e3), int(1e3 + nrows))]),
+        ("datetimes", gen_datetime_strings(nrows)),
+        ("dates", gen_date_strings(nrows)),
+        ("times", gen_time_strings(nrows)),
+        ("nulls", [np.nan] * nrows),
     ]
 
     df = pd.DataFrame.from_dict(dict(items))
@@ -49,13 +52,13 @@ def df(request):
         df.loc[j, list(df.columns)[i]] = None
 
     # No nulls in poissonint to avoid casting as floats
-    df['poissonint'] = poisson
+    df["poissonint"] = poisson
     # Add column that is strictly correlated with a float column
-    df['normalcorr'] = n1 + n2
+    df["normalcorr"] = n1 + n2
     # Add a column that has values where normal has nulls
-    df['antinormal'] = np.where(df.normal.isnull(), n1 + n2, np.nan)
+    df["antinormal"] = np.where(df.normal.isnull(), n1 + n2, np.nan)
 
-    df.to_csv(dirname + '/test_results/test_data.csv', index=False)
+    df.to_csv(dirname + "/test_results/test_data.csv", index=False)
 
     return df
 
@@ -68,7 +71,7 @@ def gen_categoricalint_with_no_twos(nrows):
 
 def gen_poisson_distributed_categorical_data(ncategories, size):
     categories = [
-        str(i) + ''.join(random.sample(string.ascii_letters, 4))
+        str(i) + "".join(random.sample(string.ascii_letters, 4))
         for i in range(ncategories)
     ]
     random_samples = [
@@ -85,7 +88,7 @@ def gen_poisson_distributed_categorical_data(ncategories, size):
 
 def gen_uniformly_distributed_categorical_data(ncategories, size):
     categories = [
-        str(i) + ''.join(random.sample(string.ascii_letters, 4))
+        str(i) + "".join(random.sample(string.ascii_letters, 4))
         for i in range(ncategories)
     ]
     random_samples = np.random.randint(0, len(categories), size=size)
@@ -122,7 +125,7 @@ def gen_datetimes(size):
     return datetimes
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def report(df):
     # Get a dict report by not calling summarise
     report = create_dask_graph(df).compute(get=mpget)

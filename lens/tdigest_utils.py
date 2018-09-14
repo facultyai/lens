@@ -25,7 +25,7 @@ def centroids_from_tdigest(tdigest):
     """Return centroid means and weights from a TDigest instance"""
 
     if not isinstance(tdigest, TDigest):
-        raise ValueError('Argument must be a TDigest instance')
+        raise ValueError("Argument must be a TDigest instance")
 
     means = [c.mean for c in tdigest.C.values()]
     counts = [c.count for c in tdigest.C.values()]

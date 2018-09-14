@@ -37,8 +37,10 @@ def _scipy_bivariate_kde(x, y, bw, gridsize, cut, clip):
     elif np.isscalar(bw):
         bw_x, bw_y = bw, bw
     else:
-        msg = ("Cannot specify a different bandwidth for each dimension "
-               "with the scipy backend. You should install statsmodels.")
+        msg = (
+            "Cannot specify a different bandwidth for each dimension "
+            "with the scipy backend. You should install statsmodels."
+        )
         raise ValueError(msg)
     x_support = _kde_support(data[:, 0], bw_x, gridsize, cut, clip[0])
     y_support = _kde_support(data[:, 1], bw_y, gridsize, cut, clip[1])
@@ -88,11 +90,13 @@ def hierarchical_ordering_indices(columns, correlation_matrix):
     if len(columns) > 2:
         pairwise_dists = distance.pdist(
             np.where(np.isnan(correlation_matrix), 0, correlation_matrix),
-            metric='euclidean')
-        linkage = hierarchy.linkage(pairwise_dists, method='average')
+            metric="euclidean",
+        )
+        linkage = hierarchy.linkage(pairwise_dists, method="average")
         dendogram = hierarchy.dendrogram(
-            linkage, no_plot=True, color_threshold=-np.inf)
-        idx = dendogram['leaves']
+            linkage, no_plot=True, color_threshold=-np.inf
+        )
+        idx = dendogram["leaves"]
     else:
         idx = list(range(len(columns)))
 

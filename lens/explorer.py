@@ -11,24 +11,23 @@ import plotly.offline as py
 
 from lens.summarise import Summary
 from lens.formatting import JupyterTable
-from lens.plotting import (plot_distribution, plot_pairdensity,
-                           plot_correlation, plot_cdf)
+from lens.plotting import (
+    plot_distribution,
+    plot_pairdensity,
+    plot_correlation,
+    plot_cdf,
+)
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())
 
 # Check whether we are in a notebook environment
 # this is a false positive if we are in the Jupyter console
-IN_NOTEBOOK = 'ipykernel' in sys.modules
+IN_NOTEBOOK = "ipykernel" in sys.modules
 
-PLOTLY_TO_MPL_KWS = {
-    'strip_style': True,
-    'resize': True,
-}
+PLOTLY_TO_MPL_KWS = {"strip_style": True, "resize": True}
 
-PLOTLY_KWS = {
-    'show_link': False,
-}
+PLOTLY_KWS = {"show_link": False}
 
 
 def _render(fig, showlegend=None):
@@ -37,10 +36,10 @@ def _render(fig, showlegend=None):
         fig = plotly.tools.mpl_to_plotly(fig, **PLOTLY_TO_MPL_KWS)
 
     if showlegend is not None:
-        fig.layout['showlegend'] = showlegend
+        fig.layout["showlegend"] = showlegend
 
     if not IN_NOTEBOOK:
-        message = 'Lens explorer can only plot in a Jupyter notebook'
+        message = "Lens explorer can only plot in a Jupyter notebook"
         logger.error(message)
         raise ValueError(message)
     else:
@@ -57,12 +56,13 @@ class Explorer(object):
     to explore the summary though tables and plots. It is best used from within
     a Jupyter notebook.
     """
+
     # Number of points to show in the CDF plot
     _N_cdf = 1000
 
     def __init__(self, summary, plot_renderer=_render):
         if not isinstance(summary, Summary):
-            raise TypeError('Can only explore a lens Summary')
+            raise TypeError("Can only explore a lens Summary")
         self.summary = summary
         self.plot_renderer = plot_renderer
 
@@ -94,25 +94,27 @@ class Explorer(object):
         summary = self.summary
         columns = summary.columns
 
-        header = ['']
+        header = [""]
         header.extend(columns)
 
-        desc = ['desc']
+        desc = ["desc"]
         desc.extend([summary._desc(column) for column in columns])
 
-        dtype = ['dtype']
-        dtype.extend([summary.summary(column)['dtype'] for column in columns])
+        dtype = ["dtype"]
+        dtype.extend([summary.summary(column)["dtype"] for column in columns])
 
-        notnulls = ['notnulls']
+        notnulls = ["notnulls"]
         notnulls.extend(
-            [summary.summary(column)['notnulls'] for column in columns])
+            [summary.summary(column)["notnulls"] for column in columns]
+        )
 
-        nulls = ['nulls']
-        nulls.extend([summary.summary(column)['nulls'] for column in columns])
+        nulls = ["nulls"]
+        nulls.extend([summary.summary(column)["nulls"] for column in columns])
 
-        unique = ['unique']
+        unique = ["unique"]
         unique.extend(
-            [summary.summary(column)['unique'] for column in columns])
+            [summary.summary(column)["unique"] for column in columns]
+        )
 
         return JupyterTable([header, desc, dtype, notnulls, nulls, unique])
 
@@ -133,32 +135,42 @@ class Explorer(object):
             category name.
         """
         details = self.summary.details(column)
-        desc = details['desc']
+        desc = details["desc"]
 
-        if desc == 'numeric':
-            caption = ''
-            data = [['', details['name']], ['desc', details['desc']],
-                    ['dtype', self.summary.summary(column)['dtype']],
-                    ['min', details['min']], ['max', details['max']],
-                    ['mean', details['mean']], ['median', details['median']],
-                    ['std', details['std']], ['sum', details['sum']],
-                    ['IQR', details['iqr']]]
+        if desc == "numeric":
+            caption = ""
+            data = [
+                ["", details["name"]],
+                ["desc", details["desc"]],
+                ["dtype", self.summary.summary(column)["dtype"]],
+                ["min", details["min"]],
+                ["max", details["max"]],
+                ["mean", details["mean"]],
+                ["median", details["median"]],
+                ["std", details["std"]],
+                ["sum", details["sum"]],
+                ["IQR", details["iqr"]],
+            ]
             return JupyterTable(data)
-        elif desc == 'categorical':
-            caption = '<p>desc: {}, dtype: {}</p>'.format(
-                details['desc'], self.summary.summary(column)['dtype'])
-            data = [['item', 'frequency']]
+        elif desc == "categorical":
+            caption = "<p>desc: {}, dtype: {}</p>".format(
+                details["desc"], self.summary.summary(column)["dtype"]
+            )
+            data = [["item", "frequency"]]
             frequencies = []
-            for item, frequency in details['frequencies'].items():
+            for item, frequency in details["frequencies"].items():
                 frequencies.append([item, frequency])
             if sort:
                 data.extend(sorted(frequencies, key=lambda x: x[0]))
             else:
                 data.extend(sorted(frequencies, key=lambda x: -x[1]))
         else:
-            caption = ''
-            data = [['', details['name']], ['desc', details['desc']],
-                    ['dtype', self.summary.summary(column)['dtype']]]
+            caption = ""
+            data = [
+                ["", details["name"]],
+                ["desc", details["desc"]],
+                ["dtype", self.summary.summary(column)["dtype"]],
+            ]
 
         return JupyterTable(data, caption=caption)
 
@@ -222,17 +234,18 @@ class Explorer(object):
 
         for column in [column1, column2]:
             column_details = self.summary.details(column)
-            if column_details['desc'] != 'categorical':
-                raise ValueError('Column `{}` is not categorical'
-                                 .format(column))
+            if column_details["desc"] != "categorical":
+                raise ValueError(
+                    "Column `{}` is not categorical".format(column)
+                )
 
         pair_details = self.summary.pair_details(column1, column2)
-        pairdensity = pair_details['pairdensity']
+        pairdensity = pair_details["pairdensity"]
 
         # Convert to numpy arrays for ease of reindexing
-        x = np.array(pairdensity['x'])
-        y = np.array(pairdensity['y'])
-        crosstab = np.array(pairdensity['density'])
+        x = np.array(pairdensity["x"])
+        y = np.array(pairdensity["y"])
+        crosstab = np.array(pairdensity["density"])
 
         # Sort by first column category names
         idx = np.argsort(x)
@@ -244,7 +257,7 @@ class Explorer(object):
         y = y[idx]
         crosstab = crosstab[idx]
 
-        table = [[''] + x.tolist()]
+        table = [[""] + x.tolist()]
         for y_category, crosstab_row in zip(y, crosstab):
             table.append([y_category] + crosstab_row.tolist())
 
@@ -267,12 +280,13 @@ class Explorer(object):
         column2 : str
             Second column.
         """
-        allowed_descriptions = ['numeric', 'categorical']
+        allowed_descriptions = ["numeric", "categorical"]
         for column in [column1, column2]:
-            column_description = self.summary.summary(column)['desc']
+            column_description = self.summary.summary(column)["desc"]
             if column_description not in allowed_descriptions:
                 raise ValueError(
-                    'Column {} is not numeric or categorical'.format(column))
+                    "Column {} is not numeric or categorical".format(column)
+                )
 
         fig = plot_pairdensity(self.summary, column1, column2)
         self.plot_renderer(fig)
@@ -317,8 +331,9 @@ class Explorer(object):
             List of columns to exclude from the correlation plot.
         """
         columns, correlation_matrix = self.summary.correlation_matrix(
-            include, exclude)
-        headers = [''] + columns
+            include, exclude
+        )
+        headers = [""] + columns
         rows = []
         for column, correlation_row in zip(columns, correlation_matrix):
             rows.append([column] + correlation_row.tolist())
