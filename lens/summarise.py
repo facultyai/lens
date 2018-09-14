@@ -65,6 +65,18 @@ def _validate_report(report, schema_version):
             )
 
 
+class NumpyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        elif isinstance(obj, np.floating):
+            return float(obj)
+        elif isinstance(obj, np.ndarray):
+            return obj.tolist()
+        else:
+            return super(NumpyEncoder, self).default(obj)
+
+
 class Summary(object):
     """A summary of a pandas DataFrame.
 
@@ -128,13 +140,22 @@ class Summary(object):
            JSON serialization of the summary report
         """
         if file is None:
-            return json.dumps(self._report, separators=(",", ":"))
+            return json.dumps(
+                self._report, separators=(",", ":"), cls=NumpyEncoder
+            )
         else:
             if hasattr(file, "write"):
-                json.dump(self._report, file, separators=(",", ":"))
+                json.dump(
+                    self._report, file, separators=(",", ":"), cls=NumpyEncoder
+                )
             else:
                 with open(file, "w") as f:
-                    json.dump(self._report, f, separators=(",", ":"))
+                    json.dump(
+                        self._report,
+                        f,
+                        separators=(",", ":"),
+                        cls=NumpyEncoder,
+                    )
 
     @property
     def columns(self):
