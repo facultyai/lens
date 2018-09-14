@@ -10,7 +10,7 @@ import pandas as pd
 import pytest
 
 from lens import summarise, metrics, __version__
-from lens.summarise import EmptyDataFrameError
+from lens.summarise import EmptyDataFrameError, NumpyEncoder
 from lens.dask_graph import _join_dask_results
 from lens.metrics import CAT_FRAC_THRESHOLD
 from fixtures import df, report  # noqa
@@ -33,7 +33,7 @@ def test_dask_row_count(df):
     assert rc_report["unique"] == len(df.drop_duplicates().index)
 
     # test serialization
-    json.dumps({"row_count": rc_report})
+    json.dumps({"row_count": rc_report}, cls=NumpyEncoder)
 
 
 def test_zero_rows_dataframe():
@@ -111,7 +111,7 @@ def test_dask_column_properties(column_properties):
 
     # test serialization
     joined = _join_dask_results(column_properties.values()).compute()
-    json.dumps({"column_summary": joined})
+    json.dumps({"column_summary": joined}, cls=NumpyEncoder)
 
 
 def test_dask_column_summary(df, column_summary):
@@ -197,7 +197,7 @@ def test_dask_column_summary(df, column_summary):
 
     # test serialization
     joined = _join_dask_results(column_summary.values()).compute()
-    json.dumps({"column_summary": joined})
+    json.dumps({"column_summary": joined}, cls=NumpyEncoder)
 
 
 def test_dask_outliers(df, column_summary):
@@ -207,7 +207,7 @@ def test_dask_outliers(df, column_summary):
 
     # test serialization
     joined = _join_dask_results(reps).compute()
-    json.dumps({"outliers": joined})
+    json.dumps({"outliers": joined}, cls=NumpyEncoder)
 
 
 @pytest.fixture(scope="module")
@@ -233,7 +233,7 @@ def test_dask_frequencies(df, frequencies):
 
     # test serialization
     joined = _join_dask_results(frequencies.values()).compute()
-    json.dumps({"freqs": joined})
+    json.dumps({"freqs": joined}, cls=NumpyEncoder)
 
 
 def test_dask_correlation(df, column_properties):
@@ -248,7 +248,7 @@ def test_dask_correlation(df, column_properties):
     assert sp.shape[1] == len(cols)
 
     # test serialization
-    json.dumps({"correlation": rep})
+    json.dumps({"correlation": rep}, cls=NumpyEncoder)
 
 
 def test_dask_pairdensity(df, column_properties, column_summary, frequencies):
@@ -282,7 +282,7 @@ def test_dask_pairdensity(df, column_properties, column_summary, frequencies):
     joined = _join_dask_results(pds).compute()
 
     # test serialization
-    json.dumps({"pairdensity": joined})
+    json.dumps({"pairdensity": joined}, cls=NumpyEncoder)
 
 
 def should_pair_density_norm_be_finite(df, column_properties):
@@ -306,7 +306,7 @@ def serialize_full_report(dreport, fname=None):
     # test that it can be serialized as json
     try:
         if fname is None:
-            json.dumps(dreport)
+            json.dumps(dreport, cls=NumpyEncoder)
         else:
             with open(fname, "w") as f:
                 json.dump(dreport, f, indent=2)
@@ -314,7 +314,7 @@ def serialize_full_report(dreport, fname=None):
         # Nail down which metric is failing
         for k in dreport.keys():
             try:
-                json.dumps({k: dreport[k]})
+                json.dumps({k: dreport[k]}, cls=NumpyEncoder)
             except TypeError as e:
                 raise TypeError(
                     "Metric {} is not JSON serializable: {}".format(k, e)
