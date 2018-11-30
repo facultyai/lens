@@ -1,5 +1,4 @@
-language: generic
-sudo: false
+language: python
 
 branches:
   only:
@@ -10,7 +9,6 @@ env:
         # The following versions are the 'default' for tests, unless
         # overidden underneath. They are defined here in order to save having
         # to repeat them for all configurations.
-        - PYTEST_OPTIONS='-v --ignore=it/'
         - MPLBACKEND=Agg
 
 matrix:
@@ -23,25 +21,33 @@ matrix:
 
         # macOS
         - os: osx
-          env: PYTHON_VERSION=3.6
+          python: 3.6
+          env: TOXENV=py36
         - os: osx
-          env: PYTHON_VERSION=2.7
+          python: 2.7
+          env: TOXENV=2.7
 
         # Linux
-        - os: linux
-          env: PYTHON_VERSION=3.6
-        - os: linux
-          env: PYTHON_VERSION=3.5
-        - os: linux
-          env: PYTHON_VERSION=2.7
+        - python: 3.6
+          env: TOXENV=py36
+        - python: 3.7
+          env: TOXENV=py37
+        - python: 2.7
+          env: TOXENV=py27
+
+        - python: 2.7
+          env: TOXENV=flake8
+        - python: 3.7
+          env: TOXENV=flake8
+        - python: 3.7
+          env: TOXENV=black
 
         # Run regression tests
         # - os: linux
         #   env: PYTEST_OPTIONS='-v --ignore=tests'
 
 install:
-    - source ci/travis_setup_conda.sh
+    - pip install tox
 
 script:
-   - flake8 lens
-   - py.test $PYTEST_OPTIONS
+    - tox
