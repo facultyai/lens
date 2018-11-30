@@ -3,7 +3,6 @@ import os
 import inspect
 import random
 import string
-from dask.multiprocessing import get as mpget
 
 from lens.dask_graph import create_dask_graph
 
@@ -128,6 +127,6 @@ def gen_datetimes(size):
 @pytest.fixture(scope="module")
 def report(df):
     # Get a dict report by not calling summarise
-    report = create_dask_graph(df).compute(get=mpget)
+    report = create_dask_graph(df).compute(scheduler="multiprocessing")
 
     return report
