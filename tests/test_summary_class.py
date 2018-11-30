@@ -10,8 +10,6 @@ import json
 
 from lens import Summary, summarise
 
-from fixtures import df, report  # noqa
-
 dirname = os.path.dirname(
     os.path.abspath(inspect.getfile(inspect.currentframe()))
 )
