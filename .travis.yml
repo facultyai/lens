@@ -1,4 +1,5 @@
 language: python
+os: linux
 dist: xenial
 
 branches:
@@ -20,15 +21,6 @@ matrix:
         # - os: linux
         #   env: CMD='sphinx-build'
 
-        # macOS
-        - os: osx
-          python: 3.6
-          env: TOXENV=py36
-        - os: osx
-          python: 2.7
-          env: TOXENV=2.7
-
-        # Linux
         - python: 3.6
           env: TOXENV=py36
         - python: 3.7
@@ -42,10 +34,6 @@ matrix:
           env: TOXENV=flake8
         - python: 3.7
           env: TOXENV=black
-
-        # Run regression tests
-        # - os: linux
-        #   env: PYTEST_OPTIONS='-v --ignore=tests'
 
 install:
     - pip install tox
