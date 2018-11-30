@@ -1,7 +1,0 @@
-boto3
-cloudpickle
-flake8
-pytest
-s3fs
-statsmodels
-toolz
