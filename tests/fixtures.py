@@ -21,8 +21,8 @@ dirname = os.path.dirname(
 @pytest.fixture(scope="module", params=[10, 60, 500, 2000])
 def df(request):
     nrows = request.param
-    n1 = np.random.randn(nrows) * 3 + 20.
-    n2 = np.random.randn(nrows) * 5 + 30.
+    n1 = np.random.randn(nrows) * 3 + 20.0
+    n2 = np.random.randn(nrows) * 5 + 30.0
     poisson = np.random.poisson(10, nrows)
     items = [
         ("normal", n1 + n2),
