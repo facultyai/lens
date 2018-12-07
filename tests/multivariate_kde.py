@@ -31,8 +31,8 @@ def plot_pd_difference(hist_pd, kde_pd, filename):
     max_dev = np.max(np.abs(kde_pd - hist_pd))
     max_dev_s = "Max dev: {:.3g}".format(max_dev)
 
-    I = np.sum((hist_pd > 1E-3) + (kde_pd > 1E-3)) / 2.0
-    mean_dev = np.sum(np.abs(kde_pd - hist_pd)) / I
+    norm = np.sum((hist_pd > 1e-3) + (kde_pd > 1e-3)) / 2.0
+    mean_dev = np.sum(np.abs(kde_pd - hist_pd)) / norm
     mean_dev_s = "Mean dev: {:.3g}".format(mean_dev)
 
     corr = 1 - np.corrcoef(kde_pd, hist_pd)[0][1]
@@ -50,7 +50,7 @@ def plot_pd_difference(hist_pd, kde_pd, filename):
 
     diff = hist_pd - kde_pd
 
-    diff_img = ax3.pcolormesh(diff * 100., cmap="RdBu", vmin=-10, vmax=10)
+    diff_img = ax3.pcolormesh(diff * 100.0, cmap="RdBu", vmin=-10, vmax=10)
     ax3.set_aspect("equal")
     ax3.set_title("Difference")
 
@@ -92,8 +92,8 @@ def compute_deviation_with_kde(df, pd, filename):
     kde_pd = _normalise_range(kde_pd)
     hist_pd = _normalise_range(hist_pd)
 
-    I = np.sum((hist_pd > 1E-3) + (kde_pd > 1E-3)) / 2.0
-    mean_dev = np.sum(np.abs(kde_pd - hist_pd)) / I
+    norm = np.sum((hist_pd > 1e-3) + (kde_pd > 1e-3)) / 2.0
+    mean_dev = np.sum(np.abs(kde_pd - hist_pd)) / norm
 
     if mean_dev > 0.01:
         plot_pd_difference(hist_pd, kde_pd, filename)

@@ -393,7 +393,7 @@ def _compute_histogram_from_frequencies(series):
     counts = []
     for cat, diff in zip(categories, diffs):
         if diff <= 1:
-            edges.append(cat + diff / 2.)
+            edges.append(cat + diff / 2.0)
             counts.append(freqs[cat])
         else:
             edges += [cat + 0.5, cat + diff - 0.5]
@@ -642,7 +642,7 @@ def _compute_smoothed_histogram2d(
     pdf = signal.fftconvolve(H.T, K, mode="same")
 
     # Normalize pdf
-    bin_centers = [edges[:-1] + np.diff(edges) / 2. for edges in bin_edges]
+    bin_centers = [edges[:-1] + np.diff(edges) / 2.0 for edges in bin_edges]
     pdf /= np.trapz(np.trapz(pdf, bin_centers[1]), bin_centers[0])
 
     # Return lower bin edges and density
@@ -712,7 +712,7 @@ def _bw_scott(column_summ, N, logtrans, d):
     else:
         iqr_estimate = 1.0
 
-    bandwidth = 1.06 * iqr_estimate * N ** (-1. / (4. + d))
+    bandwidth = 1.06 * iqr_estimate * N ** (-1.0 / (4.0 + d))
 
     return bandwidth / factor
 

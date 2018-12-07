@@ -10,8 +10,6 @@ import json
 
 from lens import Summary, summarise
 
-from fixtures import df, report  # noqa
-
 dirname = os.path.dirname(
     os.path.abspath(inspect.getfile(inspect.currentframe()))
 )
@@ -356,4 +354,4 @@ def test_summary_cdf(ls, column):
     for p in ls._report["column_summary"][column]["percentiles"]:
         tol = tdigest_tol[p] * np.sqrt(10000 / ls.rows)
         x = ls._report["column_summary"][column]["percentiles"][p]
-        assert np.allclose(p / 100., cdf(x), atol=tol, rtol=1)
+        assert np.allclose(p / 100.0, cdf(x), atol=tol, rtol=1)

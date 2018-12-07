@@ -13,7 +13,6 @@ from lens import summarise, metrics, __version__
 from lens.summarise import EmptyDataFrameError, NumpyEncoder
 from lens.dask_graph import _join_dask_results
 from lens.metrics import CAT_FRAC_THRESHOLD
-from fixtures import df, report  # noqa
 
 from multivariate_kde import compute_deviation_with_kde
 
