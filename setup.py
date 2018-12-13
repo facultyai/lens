@@ -29,7 +29,7 @@ setup(
     license="Apache 2.0",
     url="https://github.com/asidatascience/lens",
     author="ASI Data Science",
-    author_email="engineering@asidatascience.com",
+    author_email="opensource@asidatascience.com",
     packages=["lens"],
     zip_safe=False,
     long_description=LONG_DESCRIPTION,
