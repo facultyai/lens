@@ -27,7 +27,7 @@ setup(
     description="Summarise and explore Pandas DataFrames",
     copyright="Copyright 2017, ASI Data Science",
     license="Apache 2.0",
-    url="https://github.com/asidatascience/lens",
+    url="https://github.com/ASIDataScience/lens",
     author="ASI Data Science",
     author_email="opensource@asidatascience.com",
     packages=["lens"],
