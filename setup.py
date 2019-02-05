@@ -29,7 +29,7 @@ setup(
     license="Apache 2.0",
     url="https://github.com/facultyai/lens",
     author="Faculty",
-    author_email="opensource@asidatascience.com",
+    author_email="opensource@faculty.ai",
     packages=["lens"],
     zip_safe=False,
     long_description=LONG_DESCRIPTION,
