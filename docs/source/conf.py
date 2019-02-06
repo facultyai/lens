@@ -56,8 +56,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Lens'
-copyright = u'2016, ASI Data Science'
-author = u'ASI Data Science'
+copyright = u'2016-2019, Faculty Science Limited'
+author = u'Faculty'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -235,7 +235,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'Lens.tex', u'Lens Documentation',
-     u'ASI Data Science', 'manual'),
+     u'Faculty', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of

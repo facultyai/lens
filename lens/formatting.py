@@ -1,7 +1,7 @@
 """Table formatting for Jupyter notebooks"""
 
 # Copyright (c) 2012-2013, Eric Moyer <eric@lemoncrab.com>
-# Copyright (c) 2016, ASI Data Science
+# Copyright (c) 2016-2019, Faculty Science Limited
 #
 # All rights reserved.
 #
