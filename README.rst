@@ -1,6 +1,9 @@
 lens
 ====
 
+.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.2593336.svg
+   :target: https://doi.org/10.5281/zenodo.2593336
+
 ``lens`` is a library for exploring data in Pandas DataFrames. It computes
 single column summary statistics and estimates the correlation between columns.
 We wrote ``lens`` when we realised that the initial steps of acquiring a new
@@ -24,11 +27,13 @@ Installation
 Testing
 -------
 
-To run the tests, run:
+Tests can be run using [`tox`](https://tox.readthedocs.io) (replace `py37` with
+the version of python you wish to use to run the tests):
 
 .. code-block:: bash
 
-    py.test --ignore=it
+    pip install tox
+    tox -e py37
 
 License
 -------
