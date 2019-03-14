@@ -1,6 +1,9 @@
 lens
 ====
 
+.. image:: https://zenodo.org/badge/100278405.svg
+   :target: https://zenodo.org/badge/latestdoi/100278405
+
 ``lens`` is a library for exploring data in Pandas DataFrames. It computes
 single column summary statistics and estimates the correlation between columns.
 We wrote ``lens`` when we realised that the initial steps of acquiring a new
