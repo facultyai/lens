@@ -27,11 +27,13 @@ Installation
 Testing
 -------
 
-To run the tests, run:
+Tests can be run using [`tox`](https://tox.readthedocs.io) (replace `py37` with
+the version of python you wish to use to run the tests):
 
 .. code-block:: bash
 
-    py.test --ignore=it
+    pip install tox
+    tox -e py37
 
 License
 -------
